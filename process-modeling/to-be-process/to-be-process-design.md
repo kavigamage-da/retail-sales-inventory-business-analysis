@@ -1,42 +1,64 @@
 # To-Be Process Design — Inventory Exception Monitoring & Management
 
 **Status:** Phase 11 — To-Be Process Design
-**Builds on:** Phases 6–10. This process does **not** depend on an unproven root cause — Phase 9 found no statistically confirmed category, city, or lead-time driver. It is designed to solve the **visibility and monitoring gaps** the As-Is analysis (Phase 10) actually found evidence for.
+**Builds on:** Phases 6–10
+
+> **Design boundary:** This To-Be process is a proposed future-state design. It is not presented as an existing RetailCo process or an implemented solution. The current dataset confirms transaction-level below-reorder observations and structural data limitations, but it does not provide enough evidence to reconstruct the actual operational workflow, ownership model, alerting process, or replenishment procedure.
+
+The design therefore focuses on the evidence-supported opportunity identified through the case study: **improving inventory exception visibility, ownership, tracking, and decision support**.
 
 ---
 
 ## 11.1 To-Be Process Objective
 
-**Problem it solves:** today, below-reorder-level transactions (1.62% of all sales) are, at best, reviewed periodically and manually (Phase 10, assumed) with no confirmed logging, ownership, or historical tracking. The To-Be process replaces that with a structured exception lifecycle.
+### Business Problem Addressed
 
-**Who benefits:** the Inventory Manager (primary owner), Procurement (replenishment decisions), Operations Manager (escalation visibility), and ultimately the Business Sponsor, who gains a consistent, auditable view instead of an assumed ad hoc process.
+The 2024 dataset contains **1,624 transaction records below the defined reorder level (1.62%)**. However, the available data does not contain persistent Product/SKU and Store identifiers, exception records, ownership information, resolution timestamps, or historical inventory movements.
 
-**What changes from As-Is:** every below-reorder event becomes a tracked record with an owner, a status, and a retained history — rather than an invisible or undocumented occurrence.
+Therefore, the current dataset cannot support recurring-exception tracking or end-to-end operational monitoring.
 
-**How it improves visibility:** continuous, systematic comparison of Stock_On_Hand against Reorder_Level replaces an assumed periodic/manual check, and every exception is logged rather than possibly going unnoticed.
+The To-Be process proposes a structured exception-management lifecycle that converts a detected below-reorder condition into a trackable business record.
 
-**How it enables recurring-exception tracking:** by introducing **future-state Product/SKU and Store identifiers** (confirmed missing from the current dataset in Phase 6, DQ-004), the same item/location can finally be tracked across time — something the current dataset structurally cannot do.
+### What the To-Be Process Changes
 
-**How it supports management decision-making:** the process feeds the KPI framework (Phase 8) and a future dashboard (Phase 23) with a live, structured exception feed instead of a one-time historical analysis.
+| Area                     | Proposed Future State                                                              |
+| ------------------------ | ---------------------------------------------------------------------------------- |
+| Detection                | Systematically evaluate inventory level against reorder level                      |
+| Exception identification | Create an exception when the defined business rule is breached                     |
+| Ownership                | Assign each exception to a responsible role                                        |
+| Investigation            | Record investigation and cause classification                                      |
+| Action                   | Record replenishment or another approved response                                  |
+| Escalation               | Escalate unresolved exceptions according to an agreed response window              |
+| History                  | Retain closed exceptions for future analysis                                       |
+| Recurrence               | Identify repeated Product/SKU + Store exceptions once persistent identifiers exist |
+| Reporting                | Feed structured exception data into management reporting and dashboards            |
+
+### Important Boundary
+
+The current dataset supports only **transaction-level detection**. A production implementation would require additional system capabilities and persistent inventory data.
+
+The To-Be design therefore represents a **proposed business process and information model**, not a claim that these capabilities currently exist.
 
 ---
 
 ## 11.2 To-Be Process
 
-| Step | Actor/System | Activity | Input | Output | Business Value |
-|---|---|---|---|---|---|
-| 1. Inventory data captured | POS/inventory system | Record Stock_On_Hand and Reorder_Level with each transaction | Sale event | Inventory snapshot | Foundation data for detection (already exists today) |
-| 2. Inventory level evaluated | IT/Data system | Continuously compare snapshot against threshold | Inventory snapshot | Evaluation result | Replaces assumed manual/periodic review |
-| 3. Reorder threshold checked | IT/Data system | Apply BR-01 (below-reorder = exception) | Evaluation result | Pass / breach flag | Consistent, rule-based detection |
-| 4. Exception identified | IT/Data system (automatic) | Flag any breach | Breach flag | Draft exception | Removes reliance on someone noticing manually |
-| 5. Exception logged | IT/Data system | Create a formal exception record (Section 11.6) | Draft exception | Exception ID + record | Enables tracking, reporting, and history |
-| 6. Owner assigned | Inventory Manager | Assign responsibility per RACI (11.9) | Logged exception | Assigned exception | Removes ambiguity about who acts |
-| 7. Exception investigated | Assigned owner | Determine likely cause, category | Assigned exception | Investigation notes | Builds a real, if still limited, causal picture over time |
-| 8. Action determined | Assigned owner / Procurement | Decide replenishment or other action | Investigation notes | Action plan | Structured decision instead of an assumed ad hoc one |
-| 9. Replenishment/action completed | Procurement / Supplier | Execute the action | Action plan | Completed action | Closes the operational loop |
-| 10. Exception status updated | Assigned owner | Move status through the lifecycle (11.5) | Completed action | Updated status | Real-time visibility into progress |
-| 11. Historical record retained | IT/Data system | Archive the closed exception (BR-04) | Closed exception | Historical record | Enables recurring-exception analysis (11.8) |
-| 12. KPI/dashboard updated | IT/Data system | Refresh KPI values (Phase 8/11.10) | Historical + live records | Updated dashboard | Keeps management visibility current |
+| Step                              | Actor/System                            | Activity                                                   | Input                       | Output                 | Business Value                                                        |
+| --------------------------------- | --------------------------------------- | ---------------------------------------------------------- | --------------------------- | ---------------------- | --------------------------------------------------------------------- |
+| 1. Inventory data captured        | Inventory/POS system                    | Capture inventory level and reorder threshold              | Inventory transaction/event | Inventory record       | Provides the information required for detection                       |
+| 2. Inventory level evaluated      | Inventory monitoring system             | Compare Stock_On_Hand against Reorder_Level                | Inventory record            | Evaluation result      | Creates consistent detection logic                                    |
+| 3. Reorder threshold checked      | System                                  | Apply BR-01                                                | Evaluation result           | Pass / breach result   | Standardizes exception identification                                 |
+| 4. Exception identified           | System                                  | Create an exception when the rule is breached              | Breach result               | Exception record       | Prevents qualifying events from being dependent on manual recognition |
+| 5. Exception logged               | System                                  | Generate unique exception record                           | Detected event              | Exception ID           | Enables tracking and audit history                                    |
+| 6. Owner assigned                 | Inventory Manager                       | Assign responsible role                                    | Exception record            | Assigned exception     | Establishes accountability                                            |
+| 7. Exception investigated         | Assigned owner                          | Review available information and determine likely cause    | Assigned exception          | Investigation record   | Builds structured operational knowledge                               |
+| 8. Action determined              | Inventory Manager / Procurement         | Decide whether replenishment or another action is required | Investigation record        | Action decision        | Creates a consistent decision point                                   |
+| 9. Action executed                | Procurement / relevant operational role | Execute approved action                                    | Action decision             | Action result          | Moves the exception toward resolution                                 |
+| 10. Status updated                | Assigned owner                          | Update lifecycle status                                    | Action result               | Updated exception      | Maintains current visibility                                          |
+| 11. Exception closed and retained | Inventory Manager / System              | Confirm resolution and retain record                       | Resolved exception          | Historical exception   | Enables future trend and recurrence analysis                          |
+| 12. Reporting updated             | System / BI or Data Team                | Refresh exception and KPI reporting                        | Exception history           | Management information | Supports ongoing decision-making                                      |
+
+**Future-state capability:** Steps 2–5 may be automated by an inventory monitoring solution. The exact implementation technology is outside the scope of this case study.
 
 ---
 
@@ -44,224 +66,312 @@
 
 ```mermaid
 flowchart TD
-    Start([Start]) --> A[Inventory data captured]
-    A --> B[Inventory level evaluated<br/>vs. Reorder_Level]
-    B --> C{Below reorder<br/>level?}
+    Start([Inventory Event]) --> A[Inventory data captured]
+    A --> B[Evaluate Stock_On_Hand<br/>against Reorder_Level]
+    B --> C{Below reorder level?}
+
     C -->|No| D[Continue monitoring]
     D --> A
-    C -->|Yes| E[Exception created]
-    E --> F{Valid<br/>exception?}
-    F -->|No| G[Correct / close exception]
-    G --> A
-    F -->|Yes| H[Owner assigned]
-    H --> I[Exception investigated]
-    I --> J{Action<br/>required?}
-    J -->|No| K[Monitor]
-    K --> A
-    J -->|Yes| L[Replenishment / escalation]
-    L --> M{Resolved?}
-    M -->|No| N[Escalate / follow up]
-    N --> L
-    M -->|Yes| O[Close and record]
-    O --> P[Historical record retained]
-    P --> Q[KPI / dashboard updated]
-    Q --> A
+
+    C -->|Yes| E[Create exception]
+    E --> F[Assign owner]
+    F --> G[Investigate exception]
+    G --> H{Action required?}
+
+    H -->|No| I[Record outcome]
+    I --> J[Close exception]
+
+    H -->|Yes| K[Determine and execute action]
+    K --> L{Resolved?}
+
+    L -->|No| M[Escalate / follow up]
+    M --> K
+
+    L -->|Yes| J[Close exception]
+    J --> N[Retain historical record]
+    N --> O[Update reporting]
+    O --> A
 ```
 
-Four decision points, in order: *Below reorder level?* → *Valid exception?* → *Action required?* → *Resolved?* — reproducible in draw.io/Lucidchart/Visio using rectangles for activities and diamonds for these four checks.
+### Key Decision Points
+
+1. **Below reorder level?**
+2. **Is action required?**
+3. **Has the exception been resolved?**
+
+These decision points should be validated with stakeholders before implementation.
 
 ---
 
 ## 11.4 As-Is vs. To-Be Comparison
 
-| Area | As-Is | To-Be | Improvement |
-|---|---|---|---|
-| Inventory monitoring | Periodic/manual review (assumed) | Continuous, automated comparison of Stock_On_Hand vs. Reorder_Level | Shrinks the time between a threshold breach and detection |
-| Exception identification | Ad hoc, no flagging mechanism evidenced | Systematic, rule-based flagging (BR-01) of every below-reorder transaction | Every qualifying case is captured consistently |
-| Alerting | None/manual (assumed) | Automated, prioritized alert (11.7) to the assigned owner | Faster awareness of new exceptions |
-| Ownership | Unclear/undefined | Every exception has one assigned owner (BR-02, RACI 11.9) | Removes ambiguity about who acts |
-| Investigation | Inconsistent/undocumented | Structured "Under Investigation" status with a recorded root-cause category | Investigation outcomes become visible and comparable |
-| Replenishment action | Assumed to happen, untracked | Logged Action Required → In Progress → Resolved stages with timestamps | Replenishment becomes traceable instead of assumed |
-| Exception history | Not retained (no such field exists today) | Every closed exception retains a historical record (BR-04) | Enables trend analysis over time |
-| Recurring exception tracking | **Not possible** — no persistent Product/SKU or Store ID (Phase 6, DQ-004) | Enabled once future-state Product/SKU and Store IDs exist (BR-05) | Distinguishes one-off exceptions from systemic ones |
-| Reporting | Fragmented/ad hoc (assumed) | Centralized KPI/dashboard updated with each exception | Single source of truth for management |
-| KPI visibility | Not confirmed as monitored today | Defined KPI set (11.10) tracked on an ongoing basis | Direct line from Phase 8's KPI framework into daily operations |
-| Management escalation | No escalation path evidenced | Unresolved exceptions past an agreed window escalate to the Operations Manager (BR-06) | Prevents high-priority items from stalling indefinitely |
+| Area                     | Current Evidence / Limitation                                                                                       | To-Be Design                                                   | Intended Improvement                                   |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------ |
+| Inventory monitoring     | Transaction-level inventory fields are available, but the actual operational monitoring process is not evidenced    | Systematically evaluate inventory level against reorder level  | Consistent detection                                   |
+| Exception identification | Below-reorder observations can be calculated analytically, but no exception-management record exists in the dataset | Create a formal exception record                               | Traceability                                           |
+| Alerting                 | No alert mechanism is evidenced in the available dataset                                                            | Introduce configurable notifications for qualifying exceptions | Faster awareness                                       |
+| Ownership                | Ownership cannot be established from the dataset                                                                    | Assign an accountable role to each exception                   | Clear accountability                                   |
+| Investigation            | Investigation process is not evidenced                                                                              | Record investigation status, notes, and cause classification   | Structured investigation                               |
+| Replenishment/action     | Actual operational procedure is not evidenced                                                                       | Record the approved action and its progress                    | Traceable action                                       |
+| Exception history        | No historical exception log is available                                                                            | Retain closed exception records                                | Historical visibility                                  |
+| Recurrence tracking      | Not possible with current Product/SKU and Store data                                                                | Enable recurrence analysis once persistent identifiers exist   | Identify repeated issues                               |
+| Reporting                | The dataset supports retrospective analysis, but ongoing operational reporting is not evidenced                     | Provide structured exception reporting/dashboarding            | Ongoing decision support                               |
+| Escalation               | No current escalation procedure is evidenced                                                                        | Introduce an agreed escalation rule                            | Prevent unresolved exceptions from remaining invisible |
+
+**Important:** “Not evidenced” does not mean the capability definitely does not exist at RetailCo. It means the available case-study data cannot establish that it exists.
 
 ---
 
-## 11.5 Exception Management Model (Lifecycle)
+## 11.5 Exception Management Lifecycle
 
 **Detected → Open → Assigned → Under Investigation → Action Required → In Progress → Resolved → Closed**
 
-| Status | Who Changes It | What Triggers It | What Must Be Recorded |
-|---|---|---|---|
-| Detected | System (automatic) | Stock_On_Hand < Reorder_Level | Timestamp, category, city, channel, current inventory, reorder level |
-| Open | System (automatic) | A formal exception record is created | Exception ID |
-| Assigned | Inventory Manager | Manual assignment | Assigned owner, assignment timestamp |
-| Under Investigation | Assigned owner | Owner begins review | Investigation notes, root-cause category (if identified) |
-| Action Required | Assigned owner | Investigation concludes action is needed | Proposed action, approver |
-| In Progress | Procurement / Supplier | Action approved and started | Action start timestamp |
-| Resolved | Assigned owner | Action completed | Resolution timestamp, resolution notes |
-| Closed | Inventory Manager | Final review/sign-off | Closure timestamp, final outcome, recurrence flag |
+| Status              | Who Changes It                        | Trigger                                     | Information Recorded                                |
+| ------------------- | ------------------------------------- | ------------------------------------------- | --------------------------------------------------- |
+| Detected            | System                                | Stock_On_Hand < Reorder_Level               | Detection timestamp, inventory level, reorder level |
+| Open                | System                                | Exception record created                    | Exception ID                                        |
+| Assigned            | Inventory Manager                     | Responsible role assigned                   | Owner, assignment timestamp                         |
+| Under Investigation | Assigned owner                        | Investigation begins                        | Investigation notes, cause category if identified   |
+| Action Required     | Assigned owner                        | Investigation determines action is required | Proposed action, approval                           |
+| In Progress         | Relevant operational/procurement role | Approved action begins                      | Action start timestamp                              |
+| Resolved            | Assigned owner                        | Action completed / issue addressed          | Resolution notes, resolution timestamp              |
+| Closed              | Inventory Manager                     | Final review completed                      | Closure timestamp, final outcome                    |
 
-**If an exception remains unresolved** beyond an agreed response window (a threshold to be set with stakeholders — see BR-06), it automatically escalates to the Operations Manager per the RACI in 11.9, rather than remaining indefinitely open with no visibility.
+### Escalation
+
+If an exception remains unresolved beyond an agreed response window, it should be escalated according to the approved future-state escalation rule.
+
+The response window is **not defined by the current dataset** and must be established through stakeholder validation.
 
 ---
 
 ## 11.6 Exception Record
 
-| Field | Purpose | Required? |
-|---|---|---|
-| Exception ID | Unique identifier for tracking | Yes |
-| Date/time detected | When the exception was identified | Yes |
-| Product/SKU ID | Identify the specific product affected | Yes — **future-state data requirement; does not exist in the current dataset** |
-| Store ID | Identify the specific store/location affected | Yes — **future-state data requirement; does not exist in the current dataset** |
-| Category | Product category | Yes (available today) |
-| City | Store location | Yes (available today) |
-| Channel | Online / Offline / Omnichannel | Yes (available today) |
-| Current inventory | Stock_On_Hand at detection | Yes (available today) |
-| Reorder level | Reorder_Level at detection | Yes (available today) |
-| Inventory gap | Reorder_Level − Stock_On_Hand | Yes (derived from today's fields) |
-| Assigned owner | Who is responsible for resolving it | Yes |
-| Priority | Low / Medium / High / Critical (11.7) | Yes |
-| Status | Current lifecycle status (11.5) | Yes |
-| Root-cause category | Classification once investigated | No — populated only after investigation |
-| Action taken | What was done to resolve it | Yes, once resolved |
-| Resolution date | When it was resolved | Yes, once resolved |
-| Resolution time | Duration from detection to resolution | Yes, once resolved (derived) |
-| Recurrence indicator | Flags whether this Product/SKU + Store has a prior exception | Yes — **also depends on the future-state Product/SKU + Store ID above** |
+| Field                | Purpose                                            | Required?                      |
+| -------------------- | -------------------------------------------------- | ------------------------------ |
+| Exception ID         | Unique identifier for tracking                     | Yes                            |
+| Detection date/time  | Identifies when the exception was detected         | Yes                            |
+| Product/SKU ID       | Identifies the affected product                    | Yes — future-state requirement |
+| Store ID             | Identifies the affected location                   | Yes — future-state requirement |
+| Category             | Product category                                   | Yes                            |
+| City                 | Geographic location                                | Yes                            |
+| Channel              | Sales channel                                      | Yes                            |
+| Stock_On_Hand        | Inventory level at detection                       | Yes                            |
+| Reorder_Level        | Threshold used for detection                       | Yes                            |
+| Inventory Gap        | Reorder_Level − Stock_On_Hand                      | Yes — derived                  |
+| Assigned Owner       | Responsible role/person                            | Yes                            |
+| Priority             | Operational priority                               | Yes                            |
+| Status               | Current lifecycle state                            | Yes                            |
+| Root-Cause Category  | Classification after investigation                 | No — populated when identified |
+| Action Taken         | Response/action performed                          | Required when action occurs    |
+| Resolution Date/Time | Completion time                                    | Required when resolved         |
+| Resolution Time      | Detection-to-resolution duration                   | Derived                        |
+| Recurrence Indicator | Identifies repeated Product/SKU + Store exceptions | Future-state requirement       |
+
+The Product/SKU and Store fields are deliberately identified as **future-state requirements** because the current dataset does not provide persistent identifiers.
 
 ---
 
 ## 11.7 Alerting Requirements
 
-**Proposed business rules — priority bands and response windows require stakeholder validation.**
+The following are **proposed requirements for stakeholder validation**, not existing RetailCo policies.
 
-- **Trigger:** an exception enters "Detected" status (Stock_On_Hand < Reorder_Level).
-- **Recipient:** the assigned owner (default: Inventory Manager) per the RACI in 11.9.
-- **Priority model:**
-  | Priority | Suggested Criterion (proposed, not validated) |
-  |---|---|
-  | Low | Inventory gap is small relative to Reorder_Level |
-  | Medium | Standard below-reorder occurrence, no other factor present |
-  | High | Recurring exception at the same (future-state) Product/SKU + Store |
-  | Critical | Recurring exception combined with a large inventory gap |
-- **Escalation rule:** an exception open beyond an agreed response window (BR-06) escalates one level and notifies the Operations Manager.
-- **Alert closure:** when the exception reaches "Resolved" status; the record itself only closes at "Closed" after sign-off.
+### Trigger
 
-The specific numeric thresholds above (what counts as "small" vs "large" gap, how many days define the response window) are **proposed placeholders requiring stakeholder validation** — not values derived from this dataset.
+An alert should be generated when an inventory record satisfies:
+
+**Stock_On_Hand < Reorder_Level**
+
+### Recipient
+
+The initial recipient should be the role assigned responsibility for inventory exception management, proposed as the **Inventory Manager**.
+
+### Proposed Priority Model
+
+| Priority | Proposed Logic                                                               |
+| -------- | ---------------------------------------------------------------------------- |
+| Low      | Small inventory gap with no additional priority factors                      |
+| Medium   | Standard below-reorder exception                                             |
+| High     | Repeated exception for the same future-state Product/SKU + Store             |
+| Critical | Repeated exception combined with an agreed high-severity inventory condition |
+
+The exact numeric thresholds for priority classification must be defined and approved by stakeholders.
+
+### Escalation
+
+An unresolved exception should be escalated when it exceeds an agreed response window.
+
+The response window and escalation hierarchy require stakeholder validation.
 
 ---
 
 ## 11.8 Recurring Exception Tracking
 
-This directly addresses the data-backed gap from Phase 10: **the current dataset has no persistent Product/SKU or Store ID**, so recurrence cannot be measured today.
+The current dataset cannot reliably measure recurrence because it lacks persistent **Product/SKU ID** and **Store ID**.
 
-**Proposed future-state key:** Product/SKU ID + Store ID + Date/Time + Exception history
+The proposed future-state tracking key is:
 
-Once this key exists, historical exception records could identify:
-- **Repeated exceptions** — the same Product/SKU + Store falling below reorder level more than once
-- **Frequently affected products** — a Product/SKU appearing across many stores' exception histories
-- **Frequently affected stores** — a Store ID appearing across many products' exception histories
-- **Repeated category/channel patterns** — e.g., confirming (or disproving) whether Dairy or Online genuinely recurs as a pattern once real history accumulates, rather than relying on the single-year snapshot used in Phase 9
-- **Persistent operational issues** — cases where the same combination recurs repeatedly despite prior resolution, suggesting an unaddressed underlying cause
+**Product/SKU ID + Store ID + Exception Date/Time + Exception History**
 
-**This entire capability is explicitly future-state** — it requires both the new identifiers (11.6, 11.12) and enough accumulated history to distinguish a real pattern from noise (the same statistical caution applied in Phase 9 would need to be reapplied once this data exists).
+Once these data elements are available, the organization could identify:
+
+* Repeated exceptions for the same product and store
+* Products repeatedly affected across locations
+* Stores repeatedly affected across products
+* Recurring category or channel patterns
+* Exceptions that remain unresolved or repeatedly reappear
+* Potential systemic operational issues requiring further investigation
+
+Any future recurrence analysis should continue the evidence-based approach used in Phase 9. A repeated observation should be treated as a signal requiring analysis rather than automatically classified as a root cause.
 
 ---
 
 ## 11.9 To-Be RACI
 
-**Proposed responsibility model requiring stakeholder validation.** R = Responsible, A = Accountable, C = Consulted, I = Informed
+**Proposed responsibility model — requires stakeholder validation.**
 
-| Activity | Operations/Store Staff | Inventory Manager | Procurement | Operations Manager | IT/Data Team |
-|---|---|---|---|---|---|
-| Monitor inventory | R | A | I | I | R |
-| Review exception | I | A/R | C | I | I |
-| Assign exception | I | A/R | I | I | I |
-| Investigate | C | A/R | C | I | I |
-| Approve action | I | C | A/R | I | I |
-| Replenish | R | I | A | I | I |
-| Resolve | R | A | C | I | I |
-| Escalate | I | R | C | A | I |
-| Review KPI | I | C | C | A | R |
+**R = Responsible | A = Accountable | C = Consulted | I = Informed**
+
+| Activity                      | Store / Operations Staff | Inventory Manager | Procurement | Operations Manager | IT / Data Team |
+| ----------------------------- | ------------------------ | ----------------- | ----------- | ------------------ | -------------- |
+| Monitor inventory exceptions  | C                        | A                 | I           | I                  | R              |
+| Review exception              | I                        | A/R               | C           | I                  | C              |
+| Assign exception              | I                        | A/R               | I           | I                  | I              |
+| Investigate exception         | C                        | A/R               | C           | I                  | C              |
+| Approve replenishment/action  | I                        | A                 | R           | I                  | I              |
+| Execute replenishment/action  | R                        | I                 | A/R         | I                  | I              |
+| Confirm resolution            | R                        | A                 | C           | I                  | I              |
+| Escalate unresolved exception | I                        | R                 | C           | A                  | I              |
+| Review KPI/reporting          | I                        | C                 | C           | A                  | R              |
+
+This RACI is a **proposed future-state governance model**, not evidence of current RetailCo responsibilities.
 
 ---
 
 ## 11.10 To-Be KPIs
 
-| KPI | Definition | Formula | Target | Data Required | Owner |
-|---|---|---|---|---|---|
-| Below-Reorder-Level Rate | Share of transactions below reorder threshold | COUNT(Stock_On_Hand<Reorder_Level) ÷ COUNT(*) | Business target to be established with stakeholders | Available today | Inventory Manager |
-| Inventory Exception Rate | Share of transactions formally logged as exceptions | COUNT(Exceptions) ÷ COUNT(*) | Business target to be established with stakeholders | Future-state exception log | Inventory Manager |
-| Exception Response Time | Time from detection to owner assignment | Assignment timestamp − Detection timestamp | Business target to be established with stakeholders | Future-state timestamps | Inventory Manager |
-| Exception Resolution Time | Time from detection to resolution | Resolution timestamp − Detection timestamp | Business target to be established with stakeholders | Future-state timestamps | Inventory Manager |
-| Recurring Exception Rate | Share of exceptions that repeat for the same product/store | Requires Product/SKU + Store history | Business target to be established with stakeholders | Future-state Product/SKU + Store ID | Inventory Manager |
-| Stockout Rate | Share of transactions/time with zero stock | COUNT(Stock_On_Hand=0) ÷ COUNT(*) | Business target to be established with stakeholders | Available today (currently always >0) | Inventory Manager |
-| Inventory Availability Rate | Inverse of Below-Reorder-Level Rate | 1 − Below-Reorder-Level Rate | Business target to be established with stakeholders | Available today | Inventory Manager |
-| Open Exception Aging | Average time exceptions remain open | AVG(Now − Detection date) for open exceptions | Business target to be established with stakeholders | Future-state timestamps | Operations Manager |
+The To-Be process should extend the KPI framework from Phase 8 with operational exception-management measures.
+
+| KPI                       | Definition                                                      | Formula                                             | Target        | Data Required                      | Proposed Owner     |
+| ------------------------- | --------------------------------------------------------------- | --------------------------------------------------- | ------------- | ---------------------------------- | ------------------ |
+| Below-Reorder-Level Rate  | Share of inventory observations below reorder level             | COUNT(Stock_On_Hand < Reorder_Level) ÷ COUNT(*)     | To be defined | Available today                    | Inventory Manager  |
+| Exception Logging Rate    | Share of qualifying below-reorder events formally logged        | COUNT(Logged Exceptions) ÷ COUNT(Qualifying Events) | To be defined | Future exception log               | Inventory Manager  |
+| Exception Response Time   | Time from detection to owner assignment                         | Assignment Time − Detection Time                    | To be defined | Future timestamps                  | Inventory Manager  |
+| Exception Resolution Time | Time from detection to resolution                               | Resolution Time − Detection Time                    | To be defined | Future timestamps                  | Inventory Manager  |
+| Recurring Exception Rate  | Share of exceptions that recur for the same Product/SKU + Store | Recurring Exceptions ÷ Total Exceptions             | To be defined | Future Product/SKU + Store history | Inventory Manager  |
+| Open Exception Aging      | Time unresolved exceptions remain open                          | Current Time − Detection Time                       | To be defined | Future lifecycle timestamps        | Operations Manager |
+
+### KPI Boundary
+
+The existing **1.62% Below-Reorder-Level Rate** is a transaction-level descriptive measure.
+
+It should **not** be interpreted as:
+
+* stockout rate,
+* product shortage rate,
+* store availability rate, or
+* inventory availability percentage.
+
+A true availability KPI would require an appropriate operational definition and supporting inventory/time data.
 
 ---
 
 ## 11.11 Business Rules
 
-| ID | Rule | Status |
-|---|---|---|
-| BR-01 | An inventory record below its defined reorder level should generate an exception | Proposed — detection logic |
-| BR-02 | Every exception should have an assigned owner | Proposed — accountability |
-| BR-03 | Every exception should have a status at all times | Proposed — lifecycle integrity |
-| BR-04 | Resolved exceptions should retain their historical record | Proposed — enables 11.8 |
-| BR-05 | Repeated exceptions should be identifiable using persistent Product/SKU and Store IDs | Proposed — depends on future-state data (11.6, 11.12) |
-| BR-06 | Unresolved exceptions exceeding an agreed response period should be escalated | Proposed — the specific response period **requires stakeholder validation** |
+| ID    | Rule                                                                                          | Status                                                     |
+| ----- | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| BR-01 | An inventory observation below its defined reorder level should generate an exception         | Proposed                                                   |
+| BR-02 | Every exception should have an assigned responsible role                                      | Proposed                                                   |
+| BR-03 | Every exception should have a valid lifecycle status                                          | Proposed                                                   |
+| BR-04 | Closed exceptions should be retained as historical records                                    | Proposed                                                   |
+| BR-05 | Repeated exceptions should be identifiable using persistent Product/SKU and Store identifiers | Proposed — future-state dependency                         |
+| BR-06 | Exceptions exceeding an agreed response period should be escalated                            | Proposed — response period requires stakeholder validation |
+| BR-07 | Exception priority should be determined using approved business rules                         | Proposed — thresholds require stakeholder validation       |
 
-All six are **proposed rules**; none reflect a confirmed existing RetailCo policy.
+All business rules above are **future-state proposals**. None should be presented as confirmed existing RetailCo policy.
 
 ---
 
 ## 11.12 Data Requirements
 
-| Data Element | Current Availability | Future Requirement | Purpose |
-|---|---|---|---|
-| Product/SKU ID | **Not available** | Persistent unique identifier per product | Per-product tracking and recurrence analysis |
-| Store ID | **Not available** | Persistent unique identifier per store/location | Per-location tracking and recurrence analysis |
-| Inventory level | Available (Stock_On_Hand) | Ideally a running balance, not just a transaction-linked snapshot | Core input for exception detection |
-| Reorder level | Available (Reorder_Level) | Continue capturing; confirm calibration with stakeholders (raised in Phase 10) | Threshold for exception detection |
-| Timestamp | Available at transaction level (Invoice_Date) | Add separate detection / assignment / resolution timestamps | Enables response and resolution-time KPIs |
-| Channel | Available | Continue capturing | Segmentation (modest signal found in Phase 9) |
-| Category | Available | Continue capturing | Segmentation |
-| Location (City) | Available | Continue capturing; consider store-level granularity via Store ID | Targeted monitoring |
-| Exception status | **Not available** | New field: lifecycle status (11.5) | Tracks where each exception stands |
-| Exception owner | **Not available** | New field: assigned person/role | Ownership and RACI accountability |
-| Action | **Not available** | New field: action type/notes | Root-cause categorization over time |
-| Resolution timestamp | **Not available** | New field | Resolution-time KPIs |
-| Historical exception ID | **Not available** | New field linking related/recurring exceptions | Recurring Exception Rate (11.8) |
+| Data Element         | Current Availability                | Future Requirement                                                              | Purpose                               |
+| -------------------- | ----------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------- |
+| Product/SKU ID       | Not available                       | Persistent unique product identifier                                            | Product-level tracking and recurrence |
+| Store ID             | Not available                       | Persistent store/location identifier                                            | Store-level tracking and recurrence   |
+| Stock_On_Hand        | Available                           | Prefer reliable inventory balance rather than transaction-linked snapshot alone | Exception detection                   |
+| Reorder_Level        | Available                           | Continue capturing and validate business calibration                            | Detection threshold                   |
+| Transaction Date     | Available                           | Retain                                                                          | Historical analysis                   |
+| Detection Timestamp  | Not available as an exception event | Create separate timestamp                                                       | Response-time measurement             |
+| Assignment Timestamp | Not available                       | Create                                                                          | Response-time measurement             |
+| Channel              | Available                           | Continue capturing                                                              | Segmentation                          |
+| Category             | Available                           | Continue capturing                                                              | Segmentation                          |
+| City                 | Available                           | Continue capturing; complement with Store ID                                    | Geographic monitoring                 |
+| Exception ID         | Not available                       | Generate unique identifier                                                      | Exception tracking                    |
+| Exception Status     | Not available                       | Create lifecycle field                                                          | Exception management                  |
+| Exception Owner      | Not available                       | Create responsible role/person field                                            | Accountability                        |
+| Investigation Notes  | Not available                       | Create                                                                          | Investigation history                 |
+| Root-Cause Category  | Not available                       | Create controlled classification                                                | Recurring analysis                    |
+| Action Taken         | Not available                       | Create                                                                          | Action tracking                       |
+| Resolution Timestamp | Not available                       | Create                                                                          | Resolution KPI                        |
+| Closure Timestamp    | Not available                       | Create                                                                          | Lifecycle management                  |
+| Recurrence Indicator | Not available                       | Derive using Product/SKU + Store history                                        | Recurrence analysis                   |
 
 ---
 
 ## 11.13 Expected Business Value
 
-- Expected to improve early visibility of inventory exceptions, replacing an assumed periodic/manual check with continuous monitoring.
-- Expected to improve exception ownership by assigning every exception to a named role rather than leaving responsibility undefined.
-- Expected to improve investigation consistency through a structured status and root-cause category.
-- Expected to improve historical tracking by retaining every closed exception, which the current dataset structure cannot do.
-- Expected to improve management reporting by feeding the Phase 8 KPI framework continuously rather than through a one-time analysis.
-- Expected to enable identification of recurring issues once future-state Product/SKU and Store identifiers exist.
-- Expected to improve consistency of monitoring across categories and cities.
-- Expected to improve decision support for the Inventory and Procurement Managers.
+The proposed To-Be process is expected to provide the following qualitative benefits:
 
-No specific percentage improvement is claimed anywhere above — these are qualitative, directional expectations only.
+* **Improved visibility** by creating a structured exception record for qualifying inventory observations.
+* **Clearer accountability** by assigning each exception to a responsible role.
+* **Better traceability** through lifecycle statuses and timestamps.
+* **More consistent investigation** through structured notes and cause categories.
+* **Historical visibility** through retention of closed exceptions.
+* **Future recurrence analysis** once persistent Product/SKU and Store identifiers are available.
+* **Improved management reporting** through structured operational data that can feed future dashboards and KPI reporting.
+* **Better decision support** for inventory and procurement management.
 
----
-
-## 11.14 Final To-Be Conclusion
-
-1. The To-Be process does **not** depend on an unproven root cause — it was designed around the confirmed visibility and monitoring gaps from Phase 10, not the unconfirmed Dairy/Mumbai or Snacks/Chennai patterns from Phase 9.
-2. It directly addresses the gaps validated earlier: no automated detection, no ownership, no history, no recurring-exception tracking.
-3. It introduces structured exception ownership and full lifecycle management (Detected → Closed) in place of an assumed, undocumented process.
-4. It enables future recurring-exception analysis specifically through the persistent Product/SKU and Store identifiers this project confirmed are currently missing (Phase 6, DQ-004).
-5. It creates the foundation for the next phase — **Requirements Engineering** — where these process steps, business rules, and data requirements translate into formal Business and Functional Requirements.
+These are **expected benefits of the proposed design**, not measured business outcomes. No implementation results or percentage improvements are claimed.
 
 ---
 
-**Next step:** Phase 12 — Business Requirements Document / Requirements Engineering, translating this To-Be design into formal BR/FR/NFR/User Stories.
+## 11.14 Design Assumptions and Validation Needs
+
+Before implementation, the following items require stakeholder validation:
+
+1. Whether Stock_On_Hand is sufficiently current for operational detection.
+2. The authoritative source for inventory and reorder-level data.
+3. Who owns inventory exceptions.
+4. The approved escalation hierarchy.
+5. Response and resolution targets.
+6. Priority definitions and severity thresholds.
+7. Whether Product/SKU and Store identifiers can be introduced.
+8. The approved root-cause classification structure.
+9. Whether replenishment requires separate approval.
+10. Which KPIs should appear in management reporting.
+11. Required dashboard/reporting frequency.
+12. Data retention and audit requirements.
+
+These items are deliberately left open rather than invented.
+
+---
+
+## 11.15 Final To-Be Conclusion
+
+The proposed To-Be process translates the evidence from the case study into a structured future-state inventory exception-management model.
+
+The design does **not** assume that Dairy/Mumbai, Snacks/Chennai, supplier lead time, or any other factor identified in Phase 9 is a confirmed root cause. Instead, it addresses the more defensible opportunity identified from the available evidence:
+
+**detect → record → assign → investigate → act → resolve → retain → analyze**
+
+The design also makes the current data limitations explicit. Persistent Product/SKU and Store identifiers, exception history, ownership, timestamps, and operational action data are required before the organization could reliably measure recurring exceptions and operational response performance.
+
+The To-Be process therefore provides the bridge between **analysis and requirements engineering**.
+
+### Evidence-to-Design Chain
+
+**Business Concern → Business Questions → Data Quality → Analysis → Evidence-Based Finding → As-Is Limitations → To-Be Design → Business Rules → Data Requirements → Formal Requirements**
+
+---
+
+**Next step:** Phase 12 — Requirements Engineering, where the To-Be process will be translated into formal **Business Requirements, Functional Requirements, Non-Functional Requirements, acceptance criteria, and traceability**.
