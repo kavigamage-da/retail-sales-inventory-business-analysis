@@ -1,0 +1,10 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+*.swp
+
+# Don't commit the raw dataset (large file / licensing) — see data/README.md for source details
+*.csv
