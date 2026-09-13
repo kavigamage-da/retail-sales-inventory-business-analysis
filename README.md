@@ -512,16 +512,8 @@ The objective was to demonstrate the ability to:
 
 <p align="center">
 
-### ⭐ If you're reviewing this repository as a recruiter
-
-The most useful starting points are:
-
-**[Problem Statement](business-analysis/problem-statement.md) → [Root Cause Analysis](business-analysis/root-cause-analysis.md) → [Requirements Specification](business-analysis/requirements-specification.md) → [To-Be Process](process-modeling/to-be-process/to-be-process-design.md) → [Executive Recommendation](executive/executive-recommendation.md)**
-
-</p>
-
----
+ 
 
 <p align="center">
-  <sub>Independent simulated case study • Synthetic data • No real client or employment claims</sub>
+  <sub>Independent simulated case study • No real client or employment claims</sub>
 </p>
