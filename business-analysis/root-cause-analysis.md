@@ -1,101 +1,199 @@
 # Root Cause Analysis — Below-Reorder-Level Inventory
 
 **Status:** Phase 9 — Root Cause Analysis
-**Builds on:** Phase 7 (Performance Analysis) and Phase 8 (KPI Framework). Per Phase 7's conclusion, the margin-based hypothesis is **not pursued further** — this entire phase focuses on the one signal with real (if modest) support: inventory recorded below reorder level.
+**Builds on:** Phase 7 — Business Performance Analysis and Phase 8 — KPI Framework
 
-> **A methodological note before starting:** this phase adds two checks that go beyond simple grouped averages — a **chi-square significance test** and a **Pareto concentration test** — to make sure the category/city patterns from Phase 7 are real, not an artifact of looking at many groups at once. The results below are more conservative than a surface read of Phase 7's tables would suggest, and that's reported honestly rather than smoothed over.
+Per Phase 7 and Phase 8, the margin-based hypothesis is not pursued further because the available Category, Brand, and Category × Brand analysis did not provide sufficient evidence of a material high-revenue/low-margin problem.
+
+This phase therefore focuses on the **evidence-supported inventory monitoring signal**: transaction records where `Stock_On_Hand < Reorder_Level`.
+
+> **Methodological note:** This analysis extends the descriptive analysis from Phase 7 with chi-square significance testing and Pareto concentration analysis. These tests are used to determine whether apparent category/city differences provide sufficient evidence to be treated as meaningful patterns. Statistical results are interpreted conservatively and are not treated as proof of operational causality.
 
 ---
 
 ## 9.1 Problem Definition
 
-1. **What is happening?** 1,624 of 100,000 transactions (**1.62%**) in the 2024 dataset are recorded with Stock_On_Hand below the Reorder_Level threshold.
-2. **Where is it happening?** Descriptively somewhat more often in Dairy/Snacks and in Mumbai/Kolkata/Chennai than in Home Care/Vegetables and Ahmedabad — though Section 9.5–9.7 below show this pattern does not clear a formal significance bar.
-3. **How large is the observed issue?** Small in absolute terms. No category, city, or category-city combination exceeds **2.47%**. The overall rate is 1.62%; the highest individual cell is 2.47%.
-4. **Why could this matter operationally?** Even a modest, evenly-spread 1.62% rate represents 1,624 real transactions a year where stock was below the reorder point — a non-zero volume worth a lightweight, ongoing monitoring mechanism, independent of whether any one segment is statistically "worse" than another.
-5. **What evidence supports the problem?** Direct computation of Stock_On_Hand vs. Reorder_Level across all 100,000 transactions (Phase 7), corroborated by the significance and concentration testing in this phase.
+### What is happening?
 
-**Framing:** this is a **modest, actionable inventory-monitoring signal** — not an inventory crisis, and (as shown below) less concentrated than it first appeared in Phase 7.
+**1,624 of 100,000 transactions (1.62%)** in the 2024 dataset are recorded with `Stock_On_Hand` below the recorded `Reorder_Level`.
+
+### Where is it happening?
+
+Descriptively, below-reorder observations vary somewhat across categories and cities.
+
+* Category range: **1.50%–1.74%**
+* City range: **1.43%–1.75%**
+* Highest observed Category × City combination: **Dairy × Mumbai at 2.47%**
+
+However, subsequent statistical testing shows that these differences are **not statistically significant at the category, city, or Category × City level**.
+
+### How large is the observed signal?
+
+The overall rate is relatively small:
+
+* **1.62% overall**
+* **1,624 records**
+* Highest Category × City rate: **2.47%**
+
+The dataset therefore does **not** support describing this as an inventory crisis or widespread stockout problem.
+
+### Why could this matter operationally?
+
+A below-reorder observation can represent an inventory-monitoring exception that may warrant attention before availability becomes a larger operational issue.
+
+However, the dataset does not establish that any below-reorder observation resulted in:
+
+* a stockout,
+* a lost sale,
+* an unfulfilled customer order,
+* emergency replenishment, or
+* customer dissatisfaction.
+
+Therefore, the business impact should be treated as a **potential operational risk**, not a measured outcome.
+
+### Evidence supporting the problem
+
+The signal is directly calculated from the relationship:
+
+`Stock_On_Hand < Reorder_Level`
+
+across all **100,000 transaction records**.
+
+Phase 7 established the baseline, while this phase tests whether the observed variation provides evidence of specific contributing factors.
 
 ---
 
 ## 9.2 Evidence-Based Root Cause Analysis
 
-| Problem | Evidence | Potential Cause | Evidence Supporting Cause | Evidence Against Cause | Confidence |
-|---|---|---|---|---|---|
-| Category-level variation | Range 1.50%–1.74% across 8 categories | Category-specific dynamics (e.g., Dairy's perishability driving tighter margins for error) | Dairy is numerically highest (1.74%) | Chi-square test: **p = 0.675** (not significant); range is only 0.24 points | **Low** |
-| City-level variation | Range 1.43%–1.75% across 8 cities | City-specific demand density or local supply conditions | Mumbai/Kolkata numerically highest | Chi-square test: **p = 0.336** (not significant) | **Low** |
-| Dairy/Mumbai & Snacks/Chennai elevated rates | 2.47% (39 cases) and 2.45% (38 cases) — highest of 64 category×city combinations | Combined category+city effect | Numerically the two highest cells tested | Chi-square across all 64 combos: **p = 0.383** (not significant); Pareto check shows no real concentration (see 9.7); each cell has ~1,500–1,650 transactions, a modest sample for a ~2% event | **Low — treat as a monitoring starting point, not a confirmed hotspot** |
-| Supplier lead time as a driver | Correlation with below-reorder status ≈ **0.0005**; rate flat (1.54%–1.70%) across all lead-time bands | Longer lead time → higher shortfall risk (a common retail assumption) | None found | Near-zero correlation; no band stands out | **Ruled out in this dataset** |
-| Channel as a driver | Online 1.74%, Omnichannel 1.65%, Offline 1.48% | Online/omnichannel fulfillment may draw down visible stock differently than in-store | Chi-square: **p = 0.026** (nominally significant) | Effect size still small (0.26 points); would not survive a correction for the ~9 factors tested in Section 9.4; no fulfillment/warehouse field exists to test the mechanism directly | **Weak / limited evidence** |
+| Problem / Factor          | Evidence                                           | Potential Explanation                                                | Evidence Supporting Explanation                                | Evidence Against / Limitation                                                  | Confidence                        |
+| ------------------------- | -------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------ | --------------------------------- |
+| Category variation        | Below-reorder rate ranges from 1.50%–1.74%         | Category-specific demand or replenishment characteristics            | Dairy and Snacks have the highest observed rates               | Chi-square p = **0.675**; difference is only 0.24 percentage points            | **Low**                           |
+| City variation            | Below-reorder rate ranges from 1.43%–1.75%         | Local demand or supply conditions                                    | Mumbai and Kolkata have the highest observed rates             | Chi-square p = **0.336**; difference is only 0.32 percentage points            | **Low**                           |
+| Category × City variation | Dairy × Mumbai = 2.47%; Snacks × Chennai = 2.45%   | Interaction between category and location                            | These are the two highest observed cells                       | Chi-square p = **0.383**; no meaningful Pareto concentration                   | **Low**                           |
+| Supplier lead time        | Correlation with below-reorder status ≈ **0.0005** | Longer lead time could potentially increase replenishment exposure   | No meaningful evidence found                                   | Relationship is effectively zero in this dataset                               | **Not supported in this dataset** |
+| Channel                   | Online 1.74%, Omnichannel 1.65%, Offline 1.48%     | Channel-specific fulfillment or stock-consumption differences        | Chi-square p = **0.026** before multiple-comparison adjustment | Effect is small; no operational fulfillment fields exist to test the mechanism | **Weak / limited**                |
+| Demand forecasting        | No forecast or demand-signal field                 | Forecast accuracy could influence replenishment timing               | Cannot be tested                                               | Required data is unavailable                                                   | **Not measurable**                |
+| Replenishment timing      | No order-placement or delivery timestamps          | Delayed replenishment could contribute to below-reorder observations | Cannot be tested                                               | Required operational history is unavailable                                    | **Not measurable**                |
+| Stock-record accuracy     | No inventory audit/system-log information          | Recorded stock could differ from physical stock                      | Cannot be tested                                               | No audit trail is available                                                    | **Not measurable**                |
+
+> **Interpretation rule:** A factor is not treated as a confirmed root cause unless the available evidence supports that conclusion. Domain knowledge can generate hypotheses for stakeholder validation, but it is not treated as dataset evidence.
 
 ---
 
 ## 9.3 5 Whys Analysis
 
-| # | Question | Answer | Type |
-|---|---|---|---|
-| 1 | Why are 1.62% of transactions recorded below reorder level? | Directly computed: Stock_On_Hand < Reorder_Level in 1,624 of 100,000 rows | **Data-supported** |
-| 2 | Why do these specific transactions fall below reorder level rather than others? | The dataset has no demand-forecast, replenishment-order, or stock-movement field that could explain *why* a given transaction landed below threshold | **Data limitation — cannot be answered from this dataset** |
-| 3 | Why do Dairy/Mumbai and Snacks/Chennai show the highest observed rates? | They are numerically highest, but a chi-square test across all 64 category×city combinations is not significant (p = 0.383), and a Pareto check (9.7) shows no real concentration. This is consistent with ordinary sampling variation across 64 groups, not a confirmed geographic/category effect | **Data-supported caveat — likely noise, not a true effect** |
-| 4 | Why doesn't lead time (or most other tested factors) explain it? | Lead time correlation ≈ 0; Category, City, Store_Format, Payment_Mode, Customer_Gender, Loyalty_Flag, Units, and Month all show flat or non-significant patterns (Section 9.4) | **Data-supported** |
-| 5 | Why can't the dataset explain more than "where to look"? | The dataset contains no operational-process fields — no replenishment order/delivery timestamps, no demand forecasts, no stock-count audit trail — that would be needed to identify an actual mechanism | **Data limitation — this is the honest stopping point for data-only analysis** |
+| # | Question                                                                | Answer                                                                                                                                                                                                      | Classification                              |
+| - | ----------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| 1 | Why are 1.62% of transaction records below reorder level?               | `Stock_On_Hand < Reorder_Level` occurs in 1,624 of 100,000 records.                                                                                                                                         | **Data-supported**                          |
+| 2 | Why do these records fall below the reorder level?                      | The dataset does not contain demand forecasts, replenishment orders, stock movements, or related operational events that explain why an individual record is below threshold.                               | **Data limitation**                         |
+| 3 | Why do Dairy/Mumbai and Snacks/Chennai have the highest observed rates? | They are numerically the highest observed combinations, but the Category × City test is not statistically significant (p = 0.383). Therefore, the data does not establish a genuine Category × City effect. | **Descriptive observation — not confirmed** |
+| 4 | Why does supplier lead time not explain the observed variation?         | The correlation with below-reorder status is approximately 0.0005, and the rate remains broadly flat across lead-time bands.                                                                                | **Data-supported**                          |
+| 5 | Why can't the dataset identify the operational mechanism?               | It lacks the process and historical fields required to trace demand, replenishment decisions, stock movements, delivery timing, and inventory-record accuracy.                                              | **Data limitation**                         |
 
-**This 5 Whys terminates in a data limitation, not a root cause** — which is itself the correct, honest conclusion: recognizing when a dataset has been fully mined, and that the next step must be stakeholder validation rather than further querying, is a real BA judgment call.
+### 5 Whys Conclusion
+
+The 5 Whys does **not produce a confirmed operational root cause**.
+
+Instead, it establishes an important BA boundary:
+
+> The available data can identify **where below-reorder observations occur**, but cannot reliably establish **why they occur**.
+
+Further investigation therefore requires stakeholder/process validation and additional operational data rather than additional querying of the same transaction dataset.
 
 ---
 
 ## 9.4 Factor Analysis
 
-| Factor | Classification | Basis |
-|---|---|---|
-| Category | Weak / limited evidence | Descriptive range 1.50%–1.74%; chi-square not significant (p = 0.675) |
-| City | Weak / limited evidence | Descriptive range 1.43%–1.75%; chi-square not significant (p = 0.336) |
-| Category × City combination | Weak / limited evidence | Highest cells identified (Dairy/Mumbai, Snacks/Chennai); combo-level chi-square not significant (p = 0.383); no Pareto concentration |
-| Store Format | No evidence | Range 1.59%–1.65%; chi-square not significant (p = 0.816) |
-| Channel | Weak / limited evidence | Range 1.48%–1.74%; chi-square p = 0.026, but small effect and doesn't survive correction for multiple factors tested |
-| Payment Mode | No evidence | Range 1.50%–1.75%, no meaningful pattern |
-| Customer Gender | No evidence | Range 1.60%–1.81% (the higher "O" figure is a small group, 5,127 rows) |
-| Loyalty Flag | No evidence | 1.60% (non-loyalty) vs. 1.68% (loyalty) — negligible difference |
-| Customer Age | No evidence | Flat 1.50%–1.72% across age bands; also only covers ~60% of transactions |
-| Units (quantity per line) | No evidence | Flat 1.56%–1.72% across 1–5 units |
-| Month / seasonality | No evidence | Ranges 1.35%–1.78% with no clear seasonal shape; November lowest, no obvious business reason evident in the data |
-| **Supplier Lead Time** | **No observed relationship / ruled out as an explanatory factor in this dataset** | Correlation ≈ 0.0005; flat across all lead-time bands. *(This does not mean lead time can never cause shortages in real retail operations — only that this dataset shows no such relationship.)* |
-| Demand forecasting accuracy | Not measurable with current dataset | No forecast or demand-signal field exists |
-| Replenishment / reorder timing | Not measurable with current dataset | No order-placement or delivery-timestamp field exists |
-| Stock-record accuracy | Not measurable with current dataset | No audit or system-log field exists |
+| Factor                      | Classification           | Evidence                                                                                |
+| --------------------------- | ------------------------ | --------------------------------------------------------------------------------------- |
+| Category                    | Descriptive only         | Range 1.50%–1.74%; chi-square p = 0.675                                                 |
+| City                        | Descriptive only         | Range 1.43%–1.75%; chi-square p = 0.336                                                 |
+| Category × City             | Descriptive only         | Highest cells identified, but chi-square p = 0.383 and no Pareto concentration          |
+| Store Format                | No meaningful evidence   | Range 1.59%–1.65%; chi-square p = 0.816                                                 |
+| Channel                     | Weak / limited evidence  | Range 1.48%–1.74%; p = 0.026 before adjustment, with small effect                       |
+| Payment Mode                | No meaningful evidence   | Range 1.50%–1.75%; no meaningful pattern                                                |
+| Customer Gender             | No meaningful evidence   | Range 1.60%–1.81%; higher values should also be interpreted with group-size limitations |
+| Loyalty Flag                | No meaningful evidence   | 1.60% non-loyalty vs. 1.68% loyalty                                                     |
+| Customer Age                | No meaningful evidence   | Range 1.50%–1.72%; age is missing for approximately 40% of records                      |
+| Units                       | No meaningful evidence   | Range 1.56%–1.72% across 1–5 units                                                      |
+| Month                       | No meaningful evidence   | Range 1.35%–1.78%; no clear seasonal pattern                                            |
+| Supplier Lead Time          | No observed relationship | Correlation ≈ 0.0005; rate broadly flat across lead-time bands                          |
+| Demand Forecasting Accuracy | Not measurable           | No forecast or demand-signal field                                                      |
+| Replenishment Timing        | Not measurable           | No order-placement or delivery timestamps                                               |
+| Stock-Record Accuracy       | Not measurable           | No inventory audit or system-log fields                                                 |
+
+### Interpretation
+
+The available transaction data does not provide strong evidence that any tested factor is a reliable explanatory driver of the below-reorder observations.
+
+The **Channel** result is the only factor with a conventional p-value below 0.05, but the effect is small and the available dataset does not contain the operational fulfillment information needed to establish a mechanism. It should therefore remain a **weak hypothesis**, not a confirmed root cause.
 
 ---
 
 ## 9.5 Category Analysis
 
-Dairy (1.74%) and Snacks (1.69%) show the highest observed below-reorder rates; Home Care (1.50%) and Vegetables (1.51%) the lowest — a range of **0.24 percentage points** across all 8 categories. A chi-square test of Category against below-reorder status returns **p = 0.675**, meaning this spread is statistically indistinguishable from random variation. A Pareto check confirms this: all 8 categories contribute a near-equal share of the 1,624 total below-reorder cases (11.6%–13.1% each — essentially the 12.5% you'd expect if the categories were identical).
+Dairy (**1.74%**) and Snacks (**1.69%**) have the highest observed below-reorder rates, while Home Care (**1.50%**) and Vegetables (**1.51%**) have the lowest.
 
-**Conclusion:** the category-level differences are correctly computed but **too small and statistically weak to justify treating any single category as a distinct operational problem** on the strength of this data alone. They're more useful as a tie-breaker for where to look first than as a confirmed finding.
+The total category range is only **0.24 percentage points**.
+
+A chi-square test of Category against below-reorder status returns **p = 0.675**, providing no statistically significant evidence of a category-level relationship in this dataset.
+
+A Pareto review also shows that below-reorder cases are distributed relatively evenly across all eight categories, with each contributing approximately **11.6%–13.1%** of cases.
+
+### Conclusion
+
+Category differences are valid descriptive observations, but they are **not strong enough to establish a category-specific operational root cause**.
+
+They may be used as a starting point for stakeholder questions or monitoring, but should not independently drive a category-specific intervention.
 
 ---
 
 ## 9.6 Geographic Analysis
 
-**Highest-rate cities:** Mumbai and Kolkata (1.75% each), Chennai (1.74%)
-**Lowest-rate cities:** Ahmedabad (1.43%), Delhi and Bengaluru (1.53% each)
-**Range:** 0.32 percentage points; chi-square **p = 0.336** (not significant)
+### Highest observed rates
 
-**Category-city combinations requiring attention:** Dairy/Mumbai (2.47%, 39 cases) and Snacks/Chennai (2.45%, 38 cases) are the two highest of all 64 combinations tested — but a chi-square test across all 64 cells is also not significant (p = 0.383, 63 degrees of freedom), and together these two cells account for only 2.4% and 2.3% of all below-reorder cases respectively.
+* Mumbai: **1.75%**
+* Kolkata: **1.75%**
+* Chennai: **1.74%**
 
-**Why these two combinations are still useful for targeted monitoring, despite not being statistically confirmed:** with 64 combinations examined, some cell will show the numerically highest rate by chance alone even if no true underlying pattern exists — this is a standard "multiple comparisons" effect, not a flaw in the calculation. A business with finite monitoring capacity still has to start somewhere, and picking the descriptively highest cells is a reasonable, low-cost operational heuristic. The key discipline is to treat Dairy/Mumbai and Snacks/Chennai explicitly as **a starting hypothesis to validate**, not a confirmed hotspot to act on as if proven.
+### Lowest observed rates
+
+* Ahmedabad: **1.43%**
+* Delhi: **1.53%**
+* Bengaluru: **1.53%**
+
+The overall city range is **0.32 percentage points**.
+
+A chi-square test gives **p = 0.336**, so the observed city differences are not statistically significant.
+
+### Category × City
+
+The two highest observed combinations are:
+
+* **Dairy × Mumbai:** 2.47% — 39 cases
+* **Snacks × Chennai:** 2.45% — 38 cases
+
+However, the Category × City analysis gives **p = 0.383**, and the Pareto analysis shows no meaningful concentration.
+
+These combinations should therefore be treated as **monitoring starting points or stakeholder-validation hypotheses**, not confirmed hotspots.
 
 ---
 
 ## 9.7 Pareto Analysis
 
-| Cut | Concentration Result |
-|---|---|
-| By Category | **No concentration.** All 8 categories contribute 11.6%–13.1% of cases each — essentially even. All 8 are needed to reach 100%. |
-| By City | **No concentration.** All 8 cities contribute 11.0%–13.7% of cases each — essentially even. |
-| By Category×City combination (64 cells) | **No meaningful concentration.** The top 10 combinations (15.6% of all 64 cells) account for only **20.2%** of below-reorder cases — barely above the 15.6% you'd expect from pure proportionality. Reaching 80% of cases requires **47 of the 64 combinations (73.4%)** — the opposite of an 80/20 pattern. |
+| Analysis Cut    | Result                                                                                                                                                                                |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| By Category     | **No meaningful concentration.** All 8 categories contribute approximately 11.6%–13.1% of cases.                                                                                      |
+| By City         | **No meaningful concentration.** All 8 cities contribute approximately 11.0%–13.7% of cases.                                                                                          |
+| Category × City | **No meaningful concentration.** The top 10 combinations account for approximately 20.2% of below-reorder cases, while 47 of 64 combinations are required to reach approximately 80%. |
 
-**Explicit conclusion, as instructed: no Pareto concentration exists in this data.** Below-reorder-level transactions are broadly and evenly scattered across categories, cities, and their combinations — this is not a "small number of bad segments" problem, it's a diffuse, low-rate pattern spread across the whole business.
+### Conclusion
+
+The below-reorder observations are **diffuse rather than concentrated**.
+
+This is important for solution design: the evidence does not support building a response around a small number of supposedly problematic categories or cities.
+
+A broader **exception-monitoring and visibility capability** is more consistent with the evidence than a narrowly targeted intervention.
 
 ---
 
@@ -103,74 +201,175 @@ Dairy (1.74%) and Snacks (1.69%) show the highest observed below-reorder rates; 
 
 ```mermaid
 graph TD
-    A["Below-Reorder-Level Inventory<br/>1.62% of transactions (1,624 of 100,000)"]
+    A["Below-Reorder-Level Inventory<br/>1.62% of transactions<br/>(1,624 of 100,000)"]
 
-    A --> B[Category-related factors]
-    A --> C[Geographic / store factors]
-    A --> D[Demand-related factors]
-    A --> E[Replenishment factors]
-    A --> F[Data / process factors]
-    A --> G[Other measurable factors]
+    A --> B["Category-related factors"]
+    A --> C["Geographic factors"]
+    A --> D["Demand-related factors"]
+    A --> E["Replenishment factors"]
+    A --> F["Data / process factors"]
+    A --> G["Other measurable factors"]
 
-    B --> B1["Partially supported<br/>Range 1.50%-1.74%, chi-sq NOT significant (p=0.675)"]
-    C --> C1["Partially supported<br/>City range 1.43%-1.75%, chi-sq NOT significant (p=0.336)"]
-    C --> C2["Store format: Not supported<br/>p=0.816"]
-    D --> D1["Not measurable<br/>No demand/forecast field exists"]
-    E --> E1["Lead time: Ruled out<br/>correlation approx 0.0005"]
-    E --> E2["Replenishment timing: Not measurable<br/>no order/delivery timestamp fields"]
-    F --> F1["Not measurable<br/>No stock-audit or system-log fields"]
-    G --> G1["Channel: Weak/limited evidence<br/>p=0.026, small effect"]
-    G --> G2["Payment mode, loyalty, age,<br/>gender, units, month: Not supported"]
+    B --> B1["Descriptive variation only<br/>1.50%-1.74%<br/>p=0.675"]
+    C --> C1["Descriptive variation only<br/>1.43%-1.75%<br/>p=0.336"]
+    C --> C2["Category × City<br/>not statistically confirmed<br/>p=0.383"]
+
+    D --> D1["Not measurable<br/>No demand / forecast fields"]
+
+    E --> E1["Lead time<br/>No observed relationship<br/>r ≈ 0.0005"]
+    E --> E2["Replenishment timing<br/>Not measurable"]
+
+    F --> F1["Stock-record accuracy<br/>Not measurable"]
+
+    G --> G1["Channel<br/>Weak / limited evidence<br/>p=0.026"]
+    G --> G2["Payment, loyalty, age,<br/>gender, units, month<br/>No meaningful evidence"]
 ```
 
 ---
 
 ## 9.9 Confirmed vs. Hypothesized Causes
 
-| Factor | Finding | Status |
-|---|---|---|
-| Supplier lead time | No correlation observed (r ≈ 0.0005); rate flat across all lead-time bands | **Ruled out in this dataset** |
-| Category | Range 1.50%–1.74%; chi-square not significant (p = 0.675); no Pareto concentration | **Descriptive only — not statistically confirmed** |
-| City | Range 1.43%–1.75%; chi-square not significant (p = 0.336) | **Descriptive only — not statistically confirmed** |
-| Channel | Range 1.48%–1.74%; chi-square p = 0.026 | **Weak signal — statistically marginal, doesn't survive multi-factor correction** |
-| Dairy / Mumbai | Highest single combination (2.47%, 39 of 1,624 cases) | **Operational starting point for monitoring — not a confirmed hotspot** (combo-level chi-square p = 0.383) |
-| Snacks / Chennai | Second-highest combination (2.45%, 38 of 1,624 cases) | **Operational starting point for monitoring — not a confirmed hotspot** |
-| Demand forecasting | No forecast/demand-signal field exists | **Not measurable — requires stakeholder validation** |
-| Stock-record accuracy | No audit/system-log field exists | **Not measurable — requires stakeholder validation** |
-| Replenishment process/timing | No order or delivery timestamp field exists | **Not measurable — requires stakeholder validation** |
+| Factor                         | Finding                                                              | Status                                                        |
+| ------------------------------ | -------------------------------------------------------------------- | ------------------------------------------------------------- |
+| Supplier Lead Time             | Correlation ≈ 0.0005; no meaningful variation across lead-time bands | **No observed relationship in this dataset**                  |
+| Category                       | Range 1.50%–1.74%; p = 0.675                                         | **Descriptive only**                                          |
+| City                           | Range 1.43%–1.75%; p = 0.336                                         | **Descriptive only**                                          |
+| Category × City                | Highest cells are Dairy/Mumbai and Snacks/Chennai; p = 0.383         | **Descriptive only**                                          |
+| Channel                        | p = 0.026, but small observed effect and limited operational data    | **Weak / limited evidence**                                   |
+| Dairy / Mumbai                 | Highest observed combination: 2.47%                                  | **Monitoring / validation hypothesis, not confirmed hotspot** |
+| Snacks / Chennai               | Second-highest observed combination: 2.45%                           | **Monitoring / validation hypothesis, not confirmed hotspot** |
+| Demand Forecasting             | Required data unavailable                                            | **Not measurable**                                            |
+| Stock-record Accuracy          | Audit/system-log data unavailable                                    | **Not measurable**                                            |
+| Replenishment Process / Timing | Order and delivery history unavailable                               | **Not measurable**                                            |
 
 ---
 
 ## 9.10 Business Impact
 
-- Transactions recorded below reorder level **may increase the risk of** reduced product availability if left unaddressed — though the dataset does not confirm that any transaction actually failed to fulfil as a result.
-- A persistent, unmonitored pattern **may increase the risk of** lost sales opportunities or the need for emergency/rush replenishment.
-- If availability gaps reach the customer level (not observable in this dataset), this **may increase the risk of** customer dissatisfaction.
-- **Financial impact cannot be quantified using the available data.** No field captures cost-of-shortfall, lost-sale value, or emergency-replenishment cost.
+The available data does not quantify an actual financial or customer impact.
+
+However, below-reorder observations **may indicate situations requiring inventory attention** if the recorded threshold represents a meaningful operational replenishment trigger.
+
+Potential implications include:
+
+* increased risk of reduced product availability;
+* increased need for timely replenishment monitoring;
+* possible future lost-sales exposure if inventory becomes insufficient to meet demand;
+* possible operational effort associated with urgent replenishment.
+
+These remain **potential impacts**, because the dataset contains no direct fields for lost sales, customer fulfillment failure, emergency replenishment cost, or customer dissatisfaction.
+
+### Quantifiable impact limitation
+
+Financial impact cannot currently be calculated because the dataset does not contain:
+
+* lost-sale value;
+* stockout duration;
+* emergency replenishment cost;
+* customer order fulfillment status; or
+* inventory shortage cost.
 
 ---
 
 ## 9.11 Root Cause Conclusion
 
-1. The dataset does **not** support the originally-assumed margin-based problem — margin % is uniform across category and brand (Phase 7).
-2. Inventory availability (transactions recorded below reorder level) remains the strongest actionable signal in the dataset — but this phase's statistical testing shows it is **weaker and more diffuse** than Phase 7's tables suggested: category and city differences are not statistically significant, and no Pareto concentration exists.
-3. Dairy/Mumbai and Snacks/Chennai are the two highest-observed combinations and are reasonable, low-cost **starting points** for monitoring — not confirmed hotspots.
-4. Supplier lead time does not explain the observed variation in this dataset and should not be pursued as a cause.
-5. The available data is sufficient to identify **where to start looking**, but not sufficient to establish **why** below-reorder occurrences happen — no demand, forecasting, replenishment-timing, or stock-accuracy fields exist to go further.
-6. Confirming an actual operational root cause requires additional data (replenishment order/delivery timestamps, demand forecasts, stock-count audit results) and validation with real stakeholders — flagged here as future work, not something this dataset alone can resolve.
+1. The original margin-based hypothesis is **not supported strongly enough by the available data** and is not carried forward.
+
+2. The dataset confirms a **1.62% transaction-level below-reorder observation rate**, making inventory visibility a reasonable area for further BA investigation.
+
+3. Category and city differences are **descriptive rather than statistically confirmed**.
+
+4. Dairy/Mumbai and Snacks/Chennai are the highest observed Category × City combinations, but they should be treated as **starting points for validation**, not proven operational hotspots.
+
+5. Pareto analysis shows that below-reorder observations are **diffuse across the business**, rather than concentrated in a small number of segments.
+
+6. Supplier lead time shows **no observed relationship** with below-reorder status in this dataset and should not be treated as a root cause.
+
+7. Channel shows a weak statistical signal, but the effect is small and the dataset lacks operational fulfillment fields required to explain the mechanism.
+
+8. The available dataset can identify **where below-reorder observations occur**, but cannot establish **why they occur**.
+
+9. Confirming an operational root cause requires additional data and stakeholder validation, including replenishment history, demand/forecast information, inventory movements, delivery timing, and stock-record accuracy information.
 
 ---
 
 ## 9.12 BA Action
 
-- **Targeted stakeholder investigation:** validate with the simulated Inventory and Procurement Managers whether Dairy (a perishable category) and the Mumbai/Chennai markets face known operational constraints not captured in this dataset.
-- **Store/category-level inventory monitoring:** because the issue is diffuse rather than concentrated, an ongoing "% below reorder level" view by category and city belongs in the KPI framework/dashboard — a one-off deep dive into two cells would be the wrong level of response to a broadly-spread pattern.
-- **Reorder-alert requirements:** define a functional requirement so the future solution flags any transaction/period recorded below reorder level (feeds directly into Phase 16 Functional Requirements).
-- **Exception reporting:** management should be able to view below-reorder transactions as a distinct, filterable exception list, not buried inside aggregate averages.
-- **Additional data collection:** recommend the business consider capturing replenishment order/delivery timestamps and demand-forecast data if inventory availability becomes a strategic priority — this is what would be needed to move from "where" to "why."
-- **Validation of inventory processes:** confirm with stakeholders whether Reorder_Level values themselves are well-calibrated (e.g., too low for fast-moving perishables like Dairy) — a policy question the data alone cannot answer.
-- **KPI monitoring:** "% Transactions Below Reorder Level" (defined in Phase 8) is the standing KPI for this signal going forward, tracked by category and city, not treated as a one-time finding.
+Based on the evidence, the recommended BA response is **visibility and validation rather than an unsupported operational intervention**.
+
+### 1. Introduce exception monitoring
+
+The future reporting solution should provide visibility into transaction-level below-reorder observations using the KPI defined in Phase 8:
+
+**% Transactions Below Reorder Level**
+
+The measure should be filterable by available dimensions such as:
+
+* Category
+* City
+* Channel
+* Store Format
+* Month
+
+### 2. Provide exception visibility
+
+Management should be able to identify the underlying records contributing to the KPI rather than relying only on an aggregate percentage.
+
+This supports investigation of individual exceptions while preserving the distinction between an observed data condition and a confirmed operational problem.
+
+### 3. Validate the process
+
+Stakeholder/process validation should investigate:
+
+* how reorder levels are established;
+* how frequently inventory is reviewed;
+* how replenishment decisions are triggered;
+* how purchase orders are created;
+* how deliveries are recorded; and
+* how inventory records are reconciled with physical stock.
+
+These are **validation questions**, not assumptions about how RetailCo currently operates.
+
+### 4. Investigate additional data requirements
+
+If inventory availability is confirmed as a strategic business concern, future data requirements should include:
+
+* persistent Product/SKU identity;
+* persistent Store identity;
+* inventory movement history;
+* replenishment order timestamps;
+* delivery timestamps;
+* demand/forecast information;
+* stock-count/audit history.
+
+### 5. Use observed hotspots cautiously
+
+Dairy/Mumbai and Snacks/Chennai can be included as examples in stakeholder validation or monitoring scenarios because they have the highest observed rates.
+
+They should **not** be treated as confirmed problem areas unless operational evidence supports the hypothesis.
+
+### 6. Maintain KPI consistency
+
+`% Transactions Below Reorder Level` remains the standing inventory KPI established in Phase 8.
+
+Its interpretation must remain:
+
+> **A transaction-level inventory attention signal, not a stockout or shortage rate.**
 
 ---
 
-**Next step:** Phase 10 — As-Is Process, describing how sales/inventory data currently flows into (simulated) management decisions.
+## BA Decision
+
+The root-cause analysis reaches an intentional stopping point.
+
+The correct BA conclusion is **not** to manufacture a root cause from weak statistical patterns. Instead, the evidence supports a more defensible decision:
+
+**Build visibility → monitor exceptions → validate the operational process → collect the missing data → investigate root causes when evidence becomes available.**
+
+This provides a direct bridge from the analytical findings into the next BA artifacts:
+
+**Evidence → Root Cause Boundary → Business Need → Process Model → Requirements**
+
+---
+
+**Next step:** Phase 10 — As-Is Process Model, documenting the simulated current-state flow for how sales and inventory information moves into management monitoring and replenishment decisions.
