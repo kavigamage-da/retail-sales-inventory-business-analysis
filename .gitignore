@@ -8,3 +8,9 @@ Thumbs.db
 
 # Don't commit the raw dataset (large file / licensing) — see data/README.md for source details
 *.csv
+
+dashboard/streamlit-app/.agents/
+dashboard/streamlit-app/.claude/
+
+dashboard/streamlit-app/.agents/
+dashboard/streamlit-app/.claude/
