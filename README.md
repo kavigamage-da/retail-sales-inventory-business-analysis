@@ -17,19 +17,148 @@
 </p>
 
 > **Independent Business Analysis Case Study**
-> A simulated FMCG retail environment created to demonstrate how a BA can move from **business concern → evidence → analysis → requirements → process design → decision support**.
+>
+> A simulated FMCG retail environment created to demonstrate how a Business Analyst can move from **business concern → evidence → analysis → requirements → process design → decision support**.
 
-**Important:** RetailCo, its stakeholders, operational processes, and business concerns are simulated. The dataset is synthetic and no real employment, client engagement, implementation, stakeholder interview, or realized business result is claimed.
+**Important:** RetailCo, its stakeholders, operational processes and business concerns are simulated. The dataset is synthetic. No real employment, client engagement, stakeholder interview, implementation or realized business result is claimed.
 
 ---
 
-## 🎯 What This Case Study Demonstrates
+# 🚀 Live Dashboard
 
-This project is designed to show **how I think as a Business Analyst**, rather than simply demonstrating technical tools.
+## [▶️ Open the Live RetailCo Dashboard](https://retailco-sales-inventory.streamlit.app/)
 
-I started with simulated management concerns, tested them against available evidence, identified which assumptions were supported or unsupported, and then translated the validated opportunity into BA artifacts and decision-support requirements.
+An interactive **Streamlit + Plotly decision-support dashboard** built from the 100,000-row transaction dataset.
 
-### The BA evidence chain
+### What can be explored
+
+* Executive KPIs
+* Monthly revenue trends
+* Revenue by category
+* Revenue by city
+* Revenue by channel
+* Revenue by store format
+* Margin analysis
+* Inventory monitoring
+* Category × City inventory signals
+* Interactive filtering by:
+
+  * Category
+  * City
+  * Channel
+  * Store Format
+  * Month range
+
+<p align="center">
+  <a href="https://retailco-sales-inventory.streamlit.app/">
+    <img src="https://img.shields.io/badge/🚀%20OPEN%20LIVE%20DASHBOARD-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" />
+  </a>
+</p>
+
+> **Recruiter note:** The dashboard is a portfolio decision-support prototype, not a production retail system.
+
+---
+
+# 📸 Dashboard Preview
+
+## Executive Overview
+
+<p align="center">
+  <img src="dashboard/dashboard-screenshots/executive-overview.png" width="95%" alt="RetailCo Executive Overview Dashboard" />
+</p>
+
+The executive view provides high-level KPIs and revenue trends intended to support management-level monitoring.
+
+---
+
+## Sales Performance
+
+<p align="center">
+  <img src="dashboard/dashboard-screenshots/sales-performance.png" width="95%" alt="RetailCo Sales Performance Dashboard" />
+</p>
+
+The sales view allows comparison across categories, cities, channels and store formats.
+
+---
+
+## Inventory Monitoring
+
+<p align="center">
+  <img src="dashboard/dashboard-screenshots/inventory-monitoring.png" width="95%" alt="RetailCo Inventory Monitoring Dashboard" />
+</p>
+
+The inventory view focuses on below-reorder monitoring and exception visibility while avoiding unsupported claims about stockouts or operational shortages.
+
+---
+
+# 💼 Why This Project Matters
+
+This case study demonstrates an **end-to-end Business Analysis workflow**, rather than simply demonstrating data visualization or technical tools.
+
+| Area                         | What the project demonstrates                                                          |
+| ---------------------------- | -------------------------------------------------------------------------------------- |
+| **Business Analysis**        | Problem framing, stakeholder analysis, business questions and evidence-based decisions |
+| **Data Analytics**           | Python, Pandas, SQL, statistical testing and exploratory analysis                      |
+| **Requirements Engineering** | Business requirements, functional requirements, user stories and acceptance criteria   |
+| **Process Analysis**         | As-Is / To-Be process modeling and exception handling                                  |
+| **Decision Support**         | KPI framework, dashboard requirements and interactive Streamlit dashboard              |
+| **Solution Thinking**        | Solution evaluation, prioritization and executive recommendation                       |
+| **Quality & Governance**     | Data-quality assessment, limitations, traceability and UAT planning                    |
+
+### The BA story
+
+```text
+Business Concern
+       ↓
+Business Question
+       ↓
+Evidence
+       ↓
+Analysis
+       ↓
+Finding
+       ↓
+Requirement
+       ↓
+Solution
+       ↓
+Decision Support
+```
+
+The project intentionally demonstrates that a BA should be willing to **reject an unsupported assumption** rather than force the evidence to support the original business concern.
+
+---
+
+# 📌 Project at a Glance
+
+|                   |                                                                                      |
+| ----------------- | ------------------------------------------------------------------------------------ |
+| **Project Type**  | Independent Business Analysis Portfolio Case Study                                   |
+| **Industry**      | FMCG / Retail                                                                        |
+| **Data**          | 100,000 synthetic transaction records                                                |
+| **Period**        | 2024                                                                                 |
+| **Primary Focus** | Business Analysis + Data Analytics + Decision Support                                |
+| **Analysis**      | Python, Pandas, SQL, statistical analysis                                            |
+| **Requirements**  | Business requirements, functional requirements, user stories and acceptance criteria |
+| **Process**       | As-Is / To-Be process modeling                                                       |
+| **Dashboard**     | Streamlit + Plotly                                                                   |
+| **Testing**       | UAT planning                                                                         |
+| **Status**        | Core BA analysis complete                                                            |
+| **Live Demo**     | [Open RetailCo Dashboard](https://retailco-sales-inventory.streamlit.app/)           |
+
+### Core competencies demonstrated
+
+`Business Analysis` · `Requirements Engineering` · `Data Analysis` · `Process Modeling` · `KPI Design` · `Root Cause Analysis` · `Decision Support` · `UAT` · `Python` · `SQL` · `Streamlit`
+
+---
+
+# 🎯 What This Case Study Demonstrates
+
+The objective was to demonstrate **how I think as a Business Analyst**, rather than simply showing technical outputs.
+
+I started with simulated management concerns, converted them into business questions, tested them against available evidence, identified which assumptions were supported or unsupported, and translated the validated opportunity into BA artifacts and decision-support requirements.
+
+## Complete BA Evidence Chain
 
 ```text
 Business Concern
@@ -63,7 +192,7 @@ Executive Recommendation
 
 ---
 
-# 🔎 Executive Findings
+# 🔎 Executive Findings — What the Analysis Actually Found
 
 The most important part of this case study is not the number of files.
 
@@ -71,13 +200,13 @@ It is the **decision-making process**.
 
 Three initial stakeholder concerns were tested against the available data:
 
-| Initial Business Concern                                     | Evidence-Based Result                            | BA Decision                              |
-| ------------------------------------------------------------ | ------------------------------------------------ | ---------------------------------------- |
-| High-revenue products have weak margins                      | ❌ **Not supported**                              | Do not prioritize margin optimization    |
-| Inventory risk is concentrated in specific categories/cities | ⚠️ **Modestly supported as a monitoring signal** | Investigate exception visibility further |
-| Supplier lead time drives inventory risk                     | ❌ **No meaningful relationship observed**        | Do not treat lead time as the root cause |
+| Initial Business Concern                                     | Evidence-Based Result                                                                                         | BA Decision                              |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| High-revenue products have weak margins                      | ❌ **Not supported**                                                                                           | Do not prioritize margin optimization    |
+| Inventory risk is concentrated in specific categories/cities | ⚠️ **Descriptive differences exist, but statistical evidence does not confirm a significant hotspot pattern** | Investigate exception visibility further |
+| Supplier lead time drives inventory risk                     | ❌ **No meaningful relationship observed**                                                                     | Do not treat lead time as the root cause |
 
-### Key evidence
+## Key Evidence
 
 * **100,000** transaction records
 * **₹39.34M** total revenue
@@ -90,7 +219,7 @@ Three initial stakeholder concerns were tested against the available data:
 * Chi-square testing did **not** establish statistically significant category/city variation
 * Pareto analysis found **no concentrated inventory-risk pattern**
 
-> **Important interpretation:** the 1.62% figure represents transaction records below the recorded reorder level. Because the dataset does not contain persistent SKU/store inventory identities or inventory movement history, it is **not presented as a stockout rate, shortage rate, or confirmed operational inventory crisis**.
+> **Important interpretation:** the 1.62% figure represents transaction records below the recorded reorder level. Because the dataset does not contain persistent SKU/store inventory identities or inventory movement history, it is **not presented as a stockout rate, shortage rate or confirmed operational inventory crisis**.
 
 ---
 
@@ -102,17 +231,33 @@ The original assumption was that the business might need margin optimization and
 
 The analysis showed:
 
-**Margin problem → Not supported**
+```text
+Margin Problem
+      ↓
+Not Supported
+```
 
-**Supplier lead-time problem → Not supported**
+```text
+Supplier Lead-Time Problem
+      ↓
+Not Supported
+```
 
-**Broad inventory crisis → Not supported**
+```text
+Broad Inventory Crisis
+      ↓
+Not Supported
+```
 
-**Inventory exception visibility → Strongest remaining BA opportunity**
+```text
+Inventory Exception Visibility
+      ↓
+Strongest Remaining BA Opportunity
+```
 
 Therefore, the later requirements and solution design focus on **inventory exception monitoring and decision visibility**, rather than forcing the original assumptions into the final recommendation.
 
-That evidence-driven pivot is one of the main BA capabilities demonstrated by this case study.
+This evidence-driven pivot is one of the main BA capabilities demonstrated by the case study.
 
 ---
 
@@ -135,7 +280,7 @@ That evidence-driven pivot is one of the main BA capabilities demonstrated by th
 
 ---
 
-## 02 — Process Modeling
+# 🔄 Process Modeling
 
 | Artifact                                                                  | Purpose                                                                           |
 | ------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
@@ -146,7 +291,7 @@ That evidence-driven pivot is one of the main BA capabilities demonstrated by th
 
 ---
 
-## 03 — Data & Analytics
+# 📊 Data & Analytics
 
 | Artifact                                                      | Purpose                                                                  |
 | ------------------------------------------------------------- | ------------------------------------------------------------------------ |
@@ -158,60 +303,50 @@ That evidence-driven pivot is one of the main BA capabilities demonstrated by th
 
 ---
 
-## 04 — Decision Support
+# 📈 Decision Support
 
-| Artifact                                                          | Purpose                                                                       |
-| ----------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| [Dashboard Requirements](dashboard/dashboard-requirements.md)     | Defines decision-support requirements without claiming a production dashboard |
-| [UAT Test Cases](testing/uat-test-cases.xlsx)                     | Defines acceptance testing scenarios                                          |
-| [Executive Recommendation](executive/executive-recommendation.md) | Converts analysis into management-oriented recommendations                    |
+| Artifact                                                                    | Purpose                                                                   |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| [Dashboard Requirements](dashboard/dashboard-requirements.md)               | Defines decision-support requirements                                     |
+| [Live Streamlit Dashboard](https://retailco-sales-inventory.streamlit.app/) | Interactive decision-support prototype built from the transaction dataset |
+| [UAT Test Cases](testing/uat-test-cases.xlsx)                               | Defines acceptance testing scenarios                                      |
+| [Executive Recommendation](executive/executive-recommendation.md)           | Converts analysis into management-oriented recommendations                |
 
 > **UAT status:** Not Executed.
-> No implementation or test execution is claimed.
+> No production implementation or test execution is claimed.
 
 ---
 
 # 📊 Analytical Snapshot
 
-### Revenue
-
-**₹39,335,134.98**
-
-### Units Sold
-
-**299,829**
-
-### Transactions
-
-**100,000**
-
-### Gross Margin
-
-**₹7,873,685.66**
-
-### Revenue-Weighted Margin
-
-**20.02%**
-
-### Below-Reorder Transaction Records
-
-**1.62%**
+| Metric                                |         Result |
+| ------------------------------------- | -------------: |
+| **Revenue**                           | ₹39,335,134.98 |
+| **Units Sold**                        |        299,829 |
+| **Transactions**                      |        100,000 |
+| **Gross Margin**                      |  ₹7,873,685.66 |
+| **Revenue-Weighted Margin**           |         20.02% |
+| **Below-Reorder Transaction Records** |          1.62% |
 
 ---
 
 # 🧠 What I Tested
 
-### 1. Profitability hypothesis
+## 1. Profitability Hypothesis
 
 I tested whether high-revenue categories and brands were associated with comparatively weak margins.
 
-**Finding:** the available Category, Brand and Category × Brand analysis did not support a meaningful high-revenue/low-margin problem.
+### Finding
 
-**Decision:** margin optimization was not carried forward as the primary problem.
+The available Category, Brand and Category × Brand analysis did not support a meaningful high-revenue/low-margin problem.
+
+### Decision
+
+Margin optimization was **not carried forward as the primary problem**.
 
 ---
 
-### 2. Inventory exception hypothesis
+## 2. Inventory Exception Hypothesis
 
 I examined the proportion of transaction records where:
 
@@ -228,11 +363,13 @@ Result:
 
 The descriptive differences across categories and cities were modest, and statistical testing did not establish significant category/city variation.
 
-**Decision:** treat this as an **inventory monitoring signal**, not evidence of an inventory crisis.
+### Decision
+
+Treat this as an **inventory monitoring signal**, not evidence of an inventory crisis.
 
 ---
 
-### 3. Supplier lead-time hypothesis
+## 3. Supplier Lead-Time Hypothesis
 
 The relationship between supplier lead time and the below-reorder indicator was tested.
 
@@ -240,7 +377,9 @@ The relationship between supplier lead time and the below-reorder indicator was 
 Correlation ≈ 0.0005
 ```
 
-**Decision:** no meaningful relationship was observed in the available dataset.
+### Decision
+
+No meaningful relationship was observed in the available dataset.
 
 Supplier lead time was therefore **not treated as a root cause**.
 
@@ -248,7 +387,7 @@ Supplier lead time was therefore **not treated as a root cause**.
 
 # 🧪 Analytical Methods
 
-### Descriptive Analysis
+## Descriptive Analysis
 
 * Revenue
 * Units
@@ -262,14 +401,14 @@ Supplier lead time was therefore **not treated as a root cause**.
 * City
 * Inventory indicators
 
-### Statistical Analysis
+## Statistical Analysis
 
 * Chi-square testing
 * Correlation analysis
 * Pareto analysis
-* Distribution/outlier review
+* Distribution / outlier review
 
-### Business Analysis
+## Business Analysis
 
 * Problem framing
 * Stakeholder analysis
@@ -281,7 +420,7 @@ Supplier lead time was therefore **not treated as a root cause**.
 * User stories
 * Acceptance criteria
 * MoSCoW prioritization
-* Traceability
+* Requirements traceability
 * Solution evaluation
 * UAT planning
 * Executive recommendation
@@ -302,9 +441,17 @@ Supplier lead time was therefore **not treated as a root cause**.
 
 <p align="center">
 
+<img src="https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" />
+<img src="https://img.shields.io/badge/Plotly-3F4F75?style=for-the-badge&logo=plotly&logoColor=white" />
 <img src="https://img.shields.io/badge/Git-GitHub-F05032?style=for-the-badge&logo=github&logoColor=white" />
 <img src="https://img.shields.io/badge/Mermaid-Diagrams-FF3670?style=for-the-badge&logo=mermaid&logoColor=white" />
+
+</p>
+
+<p align="center">
+
 <img src="https://img.shields.io/badge/Business%20Analysis-Requirements-6C63FF?style=for-the-badge" />
+<img src="https://img.shields.io/badge/Process%20Modeling-BPMN-7C4DFF?style=for-the-badge" />
 <img src="https://img.shields.io/badge/UAT-Testing-8A2BE2?style=for-the-badge" />
 
 </p>
@@ -344,6 +491,17 @@ retail-sales-inventory-business-analysis/
 │   └── excel-analysis/
 │
 ├── 📂 dashboard/
+│   ├── dashboard-screenshots/
+│   │   ├── executive-overview.png
+│   │   ├── sales-performance.png
+│   │   └── inventory-monitoring.png
+│   │
+│   ├── streamlit-app/
+│   │   ├── app.py
+│   │   ├── data.csv
+│   │   ├── requirements.txt
+│   │   └── README.md
+│   │
 │   └── dashboard-requirements.md
 │
 ├── 📂 testing/
@@ -357,9 +515,9 @@ retail-sales-inventory-business-analysis/
 
 ---
 
-# 🔗 Traceability
+# 🔗 Requirements & Evidence Traceability
 
-The project is structured so that the major BA outputs connect rather than existing as isolated documents:
+The project is structured so that the major BA outputs connect rather than existing as isolated documents.
 
 ```text
 Dataset
@@ -393,7 +551,7 @@ UAT
 Executive Recommendation
 ```
 
-This is intended to demonstrate **requirements traceability and evidence-based decision making**, rather than simply collecting unrelated portfolio artifacts.
+This demonstrates **requirements traceability and evidence-based decision making**, rather than simply collecting unrelated portfolio artifacts.
 
 ---
 
@@ -401,7 +559,7 @@ This is intended to demonstrate **requirements traceability and evidence-based d
 
 This case study intentionally does **not** claim capabilities that the dataset cannot support.
 
-### Available
+## Available
 
 * 100,000 transaction records
 * 2024 transaction data
@@ -417,7 +575,7 @@ This case study intentionally does **not** claim capabilities that the dataset c
 * Supplier lead-time field
 * Customer demographic fields with missing values
 
-### Not Available
+## Not Available
 
 * Prior-year data
 * Persistent Product/SKU identity
@@ -426,7 +584,7 @@ This case study intentionally does **not** claim capabilities that the dataset c
 * Purchase-order history
 * Supplier performance history
 * Returns
-* Wastage/shrinkage
+* Wastage / shrinkage
 * Promotion mechanics
 * True stockout events
 * Production implementation data
@@ -438,27 +596,27 @@ Therefore, claims such as **stockout rate, true inventory availability, YoY grow
 
 # 🎯 BA Principles Demonstrated
 
-### Evidence before assumptions
+### Evidence Before Assumptions
 
 A business concern is treated as a hypothesis until the available evidence supports it.
 
-### Questions before solutions
+### Questions Before Solutions
 
 Business questions are defined before jumping into dashboard or system requirements.
 
-### Data limitations matter
+### Data Limitations Matter
 
 Unavailable fields are documented rather than silently estimated.
 
-### Symptoms are not automatically root causes
+### Symptoms Are Not Automatically Root Causes
 
-A correlation, descriptive difference, or operational assumption is not automatically treated as a confirmed cause.
+A correlation, descriptive difference or operational assumption is not automatically treated as a confirmed cause.
 
-### Requirements follow validated needs
+### Requirements Follow Validated Needs
 
 The solution direction changes when evidence changes.
 
-### Recommendations must be traceable
+### Recommendations Must Be Traceable
 
 Management recommendations are linked back to analysis and documented limitations.
 
@@ -466,7 +624,7 @@ Management recommendations are linked back to analysis and documented limitation
 
 # 🚧 Project Status
 
-### Core BA Analysis — Complete
+## Core BA Analysis — Complete
 
 The core analytical and BA foundation is complete, including:
 
@@ -482,10 +640,11 @@ The core analytical and BA foundation is complete, including:
 * User stories
 * Solution evaluation
 * Dashboard requirements
+* Interactive Streamlit dashboard
 * UAT planning
 * Executive recommendation
 
-### Portfolio Enhancements — In Progress
+## Portfolio Enhancements — In Progress
 
 * Risk register
 * Change management plan
@@ -500,7 +659,7 @@ The core analytical and BA foundation is complete, including:
 
 This project was independently created as a **Business Analysis portfolio case study** to demonstrate the ability to connect:
 
-**Business → Data → Process → Requirements → Product/Technology**
+**Business → Data → Process → Requirements → Product / Technology**
 
 The objective was not to make the dataset look perfect.
 
@@ -510,10 +669,44 @@ The objective was to demonstrate the ability to:
 
 ---
 
+# ⭐ Key Takeaway
+
+This project is ultimately about **evidence-driven Business Analysis**.
+
+The strongest outcome was not finding a dramatic business problem.
+
+It was recognizing when the evidence **did not support the original assumption**, documenting why, and redirecting the solution toward a more defensible opportunity.
+
+```text
+Ask
+ ↓
+Investigate
+ ↓
+Validate
+ ↓
+Challenge assumptions
+ ↓
+Translate evidence
+ ↓
+Define requirements
+ ↓
+Design decision support
+ ↓
+Recommend
+```
+
+---
+
 <p align="center">
 
- 
+<b>Independent simulated case study • No real client or employment claims</b>
+
+</p>
 
 <p align="center">
-  <sub>Independent simulated case study • No real client or employment claims</sub>
+
+<a href="https://retailco-sales-inventory.streamlit.app/">
+  <img src="https://img.shields.io/badge/🚀%20LIVE%20DASHBOARD-Open%20Demo-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" />
+</a>
+
 </p>
